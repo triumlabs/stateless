@@ -488,10 +488,11 @@ namespace Stateless
         /// in the current state.
         /// </summary>
         /// <param name="trigger">Trigger to test.</param>
+        /// <param name="args">Trigger arguments.</param>
         /// <returns>True if the trigger can be fired, false otherwise.</returns>
-        public bool CanFire(TTrigger trigger)
+        public bool CanFire(TTrigger trigger, params object[] args)
         {
-            return CurrentRepresentation.CanHandle(trigger);
+            return CurrentRepresentation.CanHandle(trigger, args);
         }
 
         /// <summary>
