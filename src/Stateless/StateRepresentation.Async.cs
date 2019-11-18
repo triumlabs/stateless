@@ -42,9 +42,24 @@ namespace Stateless
                         entryActionDescription));
             }
 
-            public void AddExitAction(Func<Transition, Task> action, Reflection.InvocationInfo exitActionDescription)
+            public void AddExitAction(Func<Transition, object[], Task> action, Reflection.InvocationInfo exitActionDescription)
             {
                 ExitActions.Add(new ExitActionBehavior.Async(action, exitActionDescription));
+            }
+
+            public void AddExitAction(TTrigger trigger, Func<Transition, object[], Task> action, Reflection.InvocationInfo exitActionDescription)
+            {
+                if (action == null) throw new ArgumentNullException(nameof(action));
+
+                ExitActions.Add(
+                    new ExitActionBehavior.Async((t, args) =>
+                    {
+                        if (t.Trigger.Equals(trigger))
+                            return action(t, args);
+
+                        return TaskResult.Done;
+                    },
+                    exitActionDescription));
             }
 
             public async Task ActivateAsync()
@@ -100,17 +115,17 @@ namespace Stateless
                 }
             }
 
-            public async Task<Transition> ExitAsync(Transition transition)
+            public async Task<Transition> ExitAsync(Transition transition, params object[] exitArgs)
             {
                 if (transition.IsReentry)
                 {
                     await ExecuteDeactivationActionsAsync().ConfigureAwait(false);
-                    await ExecuteExitActionsAsync(transition).ConfigureAwait(false);
+                    await ExecuteExitActionsAsync(transition, exitArgs).ConfigureAwait(false);
                 }
                 else if (!Includes(transition.Destination))
                 {
                     await ExecuteDeactivationActionsAsync().ConfigureAwait(false);
-                    await ExecuteExitActionsAsync(transition).ConfigureAwait(false);
+                    await ExecuteExitActionsAsync(transition, exitArgs).ConfigureAwait(false);
 
                     if (_superstate != null)
                     {
@@ -140,10 +155,10 @@ namespace Stateless
                     await action.ExecuteAsync(transition, entryArgs).ConfigureAwait(false);
             }
 
-            async Task ExecuteExitActionsAsync(Transition transition)
+            async Task ExecuteExitActionsAsync(Transition transition, object[] exitArgs)
             {
                 foreach (var action in ExitActions)
-                    await action.ExecuteAsync(transition).ConfigureAwait(false);
+                    await action.ExecuteAsync(transition, exitArgs).ConfigureAwait(false);
             }
 
             async Task ExecuteInternalActionsAsync(Transition transition, object[] args)

@@ -191,7 +191,7 @@ namespace Stateless
                 {
                     // Then Exit the final superstate
                     transition = new Transition(handler.Destination, handler.Destination, trigger);
-                    await newRepresentation.ExitAsync(transition);
+                    await newRepresentation.ExitAsync(transition, args);
                 }
 
                 await _onTransitionedEvent.InvokeAsync(new Transition(source, handler.Destination, trigger));
@@ -203,7 +203,7 @@ namespace Stateless
             {
                 var transition = new Transition(source, destination, trigger);
 
-                transition = await representativeState.ExitAsync(transition).ConfigureAwait(false);
+                transition = await representativeState.ExitAsync(transition, args).ConfigureAwait(false);
 
                 State = transition.Destination;
                 var newRepresentation = GetRepresentation(transition.Destination);

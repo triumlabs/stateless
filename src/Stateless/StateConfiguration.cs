@@ -1037,7 +1037,7 @@ namespace Stateless
                 if (exitAction == null) throw new ArgumentNullException(nameof(exitAction));
 
                 _representation.AddExitAction(
-                    t => exitAction(),
+                    (t, args) => exitAction(),
                     Reflection.InvocationInfo.Create(exitAction, exitActionDescription));
                 return this;
             }
@@ -1052,7 +1052,151 @@ namespace Stateless
             public StateConfiguration OnExit(Action<Transition> exitAction, string exitActionDescription = null)
             {
                 _representation.AddExitAction(
-                    exitAction,
+                    (t, args) => exitAction(t),
+                    Reflection.InvocationInfo.Create(exitAction, exitActionDescription));
+                return this;
+            }
+
+            /// <summary>
+            /// Specify an action that will execute when transitioning from
+            /// the configured state.
+            /// </summary>
+            /// <typeparam name="TArg0">Type of the first trigger argument.</typeparam>
+            /// <param name="trigger">The trigger by which the state must be exited in order for the action to execute.</param>
+            /// <param name="exitAction">Action to execute.</param>
+            /// <param name="exitActionDescription">Action description.</param>
+            /// <returns>The receiver.</returns>
+            public StateConfiguration OnExitTo<TArg0>(TriggerWithParameters<TArg0> trigger, Action<TArg0> exitAction, string exitActionDescription = null)
+            {
+                if (trigger == null) throw new ArgumentNullException(nameof(trigger));
+                if (exitAction == null) throw new ArgumentNullException(nameof(exitAction));
+
+                _representation.AddExitAction(
+                    trigger.Trigger,
+                    (t, args) => exitAction(
+                        ParameterConversion.Unpack<TArg0>(args, 0)),
+                    Reflection.InvocationInfo.Create(exitAction, exitActionDescription));
+                return this;
+            }
+
+            /// <summary>
+            /// Specify an action that will execute when transitioning from
+            /// the configured state.
+            /// </summary>
+            /// <typeparam name="TArg0">Type of the first trigger argument.</typeparam>
+            /// <param name="trigger">The trigger by which the state must be exited in order for the action to execute.</param>
+            /// <param name="exitAction">Action to execute.</param>
+            /// <param name="exitActionDescription">Action description.</param>
+            /// <returns>The receiver.</returns>
+            public StateConfiguration OnExitTo<TArg0>(TriggerWithParameters<TArg0> trigger, Action<TArg0, Transition> exitAction, string exitActionDescription = null)
+            {
+                if (trigger == null) throw new ArgumentNullException(nameof(trigger));
+                if (exitAction == null) throw new ArgumentNullException(nameof(exitAction));
+
+                _representation.AddExitAction(
+                    trigger.Trigger,
+                    (t, args) => exitAction(
+                        ParameterConversion.Unpack<TArg0>(args, 0), t),
+                    Reflection.InvocationInfo.Create(exitAction, exitActionDescription));
+                return this;
+            }
+
+            /// <summary>
+            /// Specify an action that will execute when transitioning from
+            /// the configured state.
+            /// </summary>
+            /// <typeparam name="TArg0">Type of the first trigger argument.</typeparam>
+            /// <typeparam name="TArg1">Type of the second trigger argument.</typeparam>
+            /// <param name="trigger">The trigger by which the state must be exited in order for the action to execute.</param>
+            /// <param name="exitAction">Action to execute.</param>
+            /// <param name="exitActionDescription">Action description.</param>
+            /// <returns>The receiver.</returns>
+            public StateConfiguration OnExitTo<TArg0, TArg1>(TriggerWithParameters<TArg0, TArg1> trigger, Action<TArg0, TArg1> exitAction, string exitActionDescription = null)
+            {
+                if (trigger == null) throw new ArgumentNullException(nameof(trigger));
+                if (exitAction == null) throw new ArgumentNullException(nameof(exitAction));
+
+                _representation.AddExitAction(
+                    trigger.Trigger,
+                    (t, args) => exitAction(
+                        ParameterConversion.Unpack<TArg0>(args, 0),
+                        ParameterConversion.Unpack<TArg1>(args, 1)),
+                    Reflection.InvocationInfo.Create(exitAction, exitActionDescription));
+                return this;
+            }
+
+            /// <summary>
+            /// Specify an action that will execute when transitioning from
+            /// the configured state.
+            /// </summary>
+            /// <typeparam name="TArg0">Type of the first trigger argument.</typeparam>
+            /// <typeparam name="TArg1">Type of the second trigger argument.</typeparam>
+            /// <param name="trigger">The trigger by which the state must be exited in order for the action to execute.</param>
+            /// <param name="exitAction">Action to execute.</param>
+            /// <param name="exitActionDescription">Action description.</param>
+            /// <returns>The receiver.</returns>
+            public StateConfiguration OnExitTo<TArg0, TArg1>(TriggerWithParameters<TArg0, TArg1> trigger, Action<TArg0, TArg1, Transition> exitAction, string exitActionDescription = null)
+            {
+                if (trigger == null) throw new ArgumentNullException(nameof(trigger));
+                if (exitAction == null) throw new ArgumentNullException(nameof(exitAction));
+
+                _representation.AddExitAction(
+                    trigger.Trigger,
+                    (t, args) => exitAction(
+                        ParameterConversion.Unpack<TArg0>(args, 0),
+                        ParameterConversion.Unpack<TArg1>(args, 1), t),
+                    Reflection.InvocationInfo.Create(exitAction, exitActionDescription));
+                return this;
+            }
+
+            /// <summary>
+            /// Specify an action that will execute when transitioning from
+            /// the configured state.
+            /// </summary>
+            /// <typeparam name="TArg0">Type of the first trigger argument.</typeparam>
+            /// <typeparam name="TArg1">Type of the second trigger argument.</typeparam>
+            /// <typeparam name="TArg2">Type of the third trigger argument.</typeparam>
+            /// <param name="trigger">The trigger by which the state must be exited in order for the action to execute.</param>
+            /// <param name="exitAction">Action to execute.</param>
+            /// <param name="exitActionDescription">Action description.</param>
+            /// <returns>The receiver.</returns>
+            public StateConfiguration OnExitTo<TArg0, TArg1, TArg2>(TriggerWithParameters<TArg0, TArg1, TArg2> trigger, Action<TArg0, TArg1, TArg2> exitAction, string exitActionDescription = null)
+            {
+                if (trigger == null) throw new ArgumentNullException(nameof(trigger));
+                if (exitAction == null) throw new ArgumentNullException(nameof(exitAction));
+
+                _representation.AddExitAction(
+                    trigger.Trigger,
+                    (t, args) => exitAction(
+                        ParameterConversion.Unpack<TArg0>(args, 0),
+                        ParameterConversion.Unpack<TArg1>(args, 1),
+                        ParameterConversion.Unpack<TArg2>(args, 2)),
+                    Reflection.InvocationInfo.Create(exitAction, exitActionDescription));
+                return this;
+            }
+
+            /// <summary>
+            /// Specify an action that will execute when transitioning from
+            /// the configured state.
+            /// </summary>
+            /// <typeparam name="TArg0">Type of the first trigger argument.</typeparam>
+            /// <typeparam name="TArg1">Type of the second trigger argument.</typeparam>
+            /// <typeparam name="TArg2">Type of the third trigger argument.</typeparam>
+            /// <param name="trigger">The trigger by which the state must be exited in order for the action to execute.</param>
+            /// <param name="exitAction">Action to execute.</param>
+            /// <param name="exitActionDescription">Action description.</param>
+            /// <returns>The receiver.</returns>
+            public StateConfiguration OnExitTo<TArg0, TArg1, TArg2>(TriggerWithParameters<TArg0, TArg1, TArg2> trigger, Action<TArg0, TArg1, TArg2, Transition> exitAction, string exitActionDescription = null)
+            {
+                if (trigger == null) throw new ArgumentNullException(nameof(trigger));
+                if (exitAction == null) throw new ArgumentNullException(nameof(exitAction));
+
+                _representation.AddExitAction(
+                    trigger.Trigger,
+                    (t, args) => exitAction(
+                        ParameterConversion.Unpack<TArg0>(args, 0),
+                        ParameterConversion.Unpack<TArg1>(args, 1),
+                        ParameterConversion.Unpack<TArg2>(args, 2), t),
                     Reflection.InvocationInfo.Create(exitAction, exitActionDescription));
                 return this;
             }

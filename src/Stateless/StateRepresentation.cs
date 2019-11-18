@@ -105,7 +105,12 @@ namespace Stateless
                 EntryActions.Add(new EntryActionBehavior.Sync(action, entryActionDescription));
             }
 
-            public void AddExitAction(Action<Transition> action, Reflection.InvocationInfo exitActionDescription)
+            public void AddExitAction(TTrigger trigger, Action<Transition, object[]> action, Reflection.InvocationInfo exitActionDescription)
+            {
+                ExitActions.Add(new ExitActionBehavior.SyncTo<TTrigger>(trigger, action, exitActionDescription));
+            }
+
+            public void AddExitAction(Action<Transition, object[]> action, Reflection.InvocationInfo exitActionDescription)
             {
                 ExitActions.Add(new ExitActionBehavior.Sync(action, exitActionDescription));
             }
@@ -163,17 +168,17 @@ namespace Stateless
                 }
             }
 
-            public Transition Exit(Transition transition)
+            public Transition Exit(Transition transition, params object[] exitArgs)
             {
                 if (transition.IsReentry)
                 {
                     ExecuteDeactivationActions();
-                    ExecuteExitActions(transition);
+                    ExecuteExitActions(transition, exitArgs);
                 }
                 else if (!Includes(transition.Destination))
                 {
                     ExecuteDeactivationActions();
-                    ExecuteExitActions(transition);
+                    ExecuteExitActions(transition, exitArgs);
 
                     // Must check if there is a superstate, and if we are leaving that superstate
                     if (_superstate != null)
@@ -203,10 +208,10 @@ namespace Stateless
                     action.Execute(transition, entryArgs);
             }
 
-            void ExecuteExitActions(Transition transition)
+            void ExecuteExitActions(Transition transition, object[] exitArgs)
             {
                 foreach (var action in ExitActions)
-                    action.Execute(transition);
+                    action.Execute(transition, exitArgs);
             }
             internal void InternalAction(Transition transition, object[] args)
             {

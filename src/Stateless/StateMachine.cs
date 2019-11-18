@@ -394,14 +394,14 @@ namespace Stateless
         private void HandleReentryTrigger(object[] args, StateRepresentation representativeState, Transition transition)
         {
             StateRepresentation representation;
-            transition = representativeState.Exit(transition);
+            transition = representativeState.Exit(transition, args);
             var newRepresentation = GetRepresentation(transition.Destination);
 
             if (!transition.Source.Equals(transition.Destination))
             {
                 // Then Exit the final superstate
                 transition = new Transition(transition.Destination, transition.Destination, transition.Trigger);
-                newRepresentation.Exit(transition);
+                newRepresentation.Exit(transition, args);
 
                 _onTransitionedEvent.Invoke(transition);
                 representation = EnterState(newRepresentation, transition, args);
@@ -416,7 +416,7 @@ namespace Stateless
 
         private void HandleTransitioningTrigger( object[] args, StateRepresentation representativeState, Transition transition)
         {
-            transition = representativeState.Exit(transition);
+            transition = representativeState.Exit(transition, args);
 
             State = transition.Destination;
             var newRepresentation = GetRepresentation(transition.Destination);
