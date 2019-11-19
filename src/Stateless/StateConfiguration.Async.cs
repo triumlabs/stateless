@@ -461,6 +461,44 @@ namespace Stateless
             /// Specify an asynchronous action that will execute when transitioning from
             /// the configured state.
             /// </summary>
+            /// <param name="exitAction">Action to execute.</param>
+            /// <param name="trigger">The trigger by which the state must be entered in order for the action to execute.</param>
+            /// <param name="exitActionDescription">Action description.</param>
+            /// <returns>The receiver.</returns>
+            public StateConfiguration OnExitToAsync(TTrigger trigger, Func<Task> exitAction, string exitActionDescription = null)
+            {
+                if (exitAction == null) throw new ArgumentNullException(nameof(exitAction));
+
+                _representation.AddExitAction(
+                    trigger,
+                    (t, args) => exitAction(),
+                    Reflection.InvocationInfo.Create(exitAction, exitActionDescription, Reflection.InvocationInfo.Timing.Asynchronous));
+                return this;
+            }
+
+            /// <summary>
+            /// Specify an asynchronous action that will execute when transitioning from
+            /// the configured state.
+            /// </summary>
+            /// <param name="exitAction">Action to execute, providing details of the transition.</param>
+            /// <param name="trigger">The trigger by which the state must be entered in order for the action to execute.</param>
+            /// <param name="exitActionDescription">Action description.</param>
+            /// <returns>The receiver.</returns>
+            public StateConfiguration OnExitToAsync(TTrigger trigger, Func<Transition, Task> exitAction, string exitActionDescription = null)
+            {
+                if (exitAction == null) throw new ArgumentNullException(nameof(exitAction));
+
+                _representation.AddExitAction(
+                    trigger,
+                    (t, args) => exitAction(t),
+                    Reflection.InvocationInfo.Create(exitAction, exitActionDescription, Reflection.InvocationInfo.Timing.Asynchronous));
+                return this;
+            }
+
+            /// <summary>
+            /// Specify an asynchronous action that will execute when transitioning from
+            /// the configured state.
+            /// </summary>
             /// <typeparam name="TArg0">Type of the first trigger argument.</typeparam>
             /// <param name="exitAction">Action to execute, providing details of the transition.</param>
             /// <param name="trigger">The trigger by which the state must be entered in order for the action to execute.</param>
