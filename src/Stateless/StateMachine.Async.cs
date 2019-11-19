@@ -38,11 +38,12 @@ namespace Stateless
         /// will be invoked.
         /// </summary>
         /// <param name="trigger">The trigger to fire.</param>
+        /// <param name="args">Trigger arguments.</param>
         /// <exception cref="System.InvalidOperationException">The current state does
         /// not allow the trigger to be fired.</exception>
-        public Task FireAsync(TTrigger trigger)
+        public Task FireAsync(TTrigger trigger, params object[] args)
         {
-            return InternalFireAsync(trigger, new object[0]);
+            return InternalFireAsync(trigger, args ?? new object[0]);
         }
 
         /// <summary>

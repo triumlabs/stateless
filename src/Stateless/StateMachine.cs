@@ -193,11 +193,12 @@ namespace Stateless
         /// will be invoked.
         /// </summary>
         /// <param name="trigger">The trigger to fire.</param>
+        /// <param name="args">Trigger arguments.</param>
         /// <exception cref="System.InvalidOperationException">The current state does
         /// not allow the trigger to be fired.</exception>
-        public void Fire(TTrigger trigger)
+        public void Fire(TTrigger trigger, params object[] args)
         {
-            InternalFire(trigger, new object[0]);
+            InternalFire(trigger, args ?? new object[0]);
         }
 
         /// <summary>
@@ -493,6 +494,57 @@ namespace Stateless
         public bool CanFire(TTrigger trigger, params object[] args)
         {
             return CurrentRepresentation.CanHandle(trigger, args);
+        }
+
+        /// <summary>
+        /// Returns true if <paramref name="trigger"/> can be fired
+        /// in the current state.
+        /// </summary>
+        /// <typeparam name="TArg0">Type of the first trigger argument.</typeparam>
+        /// <param name="trigger">Trigger to test.</param>
+        /// <param name="arg0">The first argument.</param>
+        /// <returns>True if the trigger can be fired, false otherwise.</returns>
+        public bool CanFire<TArg0>(TriggerWithParameters<TArg0> trigger, TArg0 arg0)
+        {
+            if (trigger == null) throw new ArgumentNullException(nameof(trigger));
+
+            return CurrentRepresentation.CanHandle(trigger.Trigger, arg0);
+        }
+
+        /// <summary>
+        /// Returns true if <paramref name="trigger"/> can be fired
+        /// in the current state.
+        /// </summary>
+        /// <typeparam name="TArg0">Type of the first trigger argument.</typeparam>
+        /// <typeparam name="TArg1">Type of the second trigger argument.</typeparam>
+        /// <param name="trigger">Trigger to test.</param>
+        /// <param name="arg0">The first argument.</param>
+        /// <param name="arg1">The second argument.</param>
+        /// <returns>True if the trigger can be fired, false otherwise.</returns>
+        public bool CanFire<TArg0, TArg1>(TriggerWithParameters<TArg0, TArg1> trigger, TArg0 arg0, TArg1 arg1)
+        {
+            if (trigger == null) throw new ArgumentNullException(nameof(trigger));
+
+            return CurrentRepresentation.CanHandle(trigger.Trigger, arg0, arg1);
+        }
+
+        /// <summary>
+        /// Returns true if <paramref name="trigger"/> can be fired
+        /// in the current state.
+        /// </summary>
+        /// <typeparam name="TArg0">Type of the first trigger argument.</typeparam>
+        /// <typeparam name="TArg1">Type of the second trigger argument.</typeparam>
+        /// <typeparam name="TArg2">Type of the third trigger argument.</typeparam>
+        /// <param name="trigger">Trigger to test.</param>
+        /// <param name="arg0">The first argument.</param>
+        /// <param name="arg1">The second argument.</param>
+        /// <param name="arg2">The third argument.</param>
+        /// <returns>True if the trigger can be fired, false otherwise.</returns>
+        public bool CanFire<TArg0, TArg1, TArg2>(TriggerWithParameters<TArg0, TArg1, TArg2> trigger, TArg0 arg0, TArg1 arg1, TArg2 arg2)
+        {
+            if (trigger == null) throw new ArgumentNullException(nameof(trigger));
+
+            return CurrentRepresentation.CanHandle(trigger.Trigger, arg0, arg1, arg2);
         }
 
         /// <summary>
