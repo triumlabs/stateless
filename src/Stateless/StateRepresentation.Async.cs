@@ -135,12 +135,12 @@ namespace Stateless
                             // Destination state is within the list, exit first superstate only if it is NOT the the first
                             if (!_superstate.UnderlyingState.Equals(transition.Destination))
                             {
-                                return await _superstate.ExitAsync(transition).ConfigureAwait(false);
+                                return await _superstate.ExitAsync(transition, exitArgs).ConfigureAwait(false);
                             }
                         }
                         else
                         {
-                            return await _superstate.ExitAsync(transition).ConfigureAwait(false);
+                            return await _superstate.ExitAsync(transition, exitArgs).ConfigureAwait(false);
                         }
 
                         //transition = new Transition(_superstate.UnderlyingState, transition.Destination, transition.Trigger);
